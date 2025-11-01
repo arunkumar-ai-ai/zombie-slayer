@@ -1,57 +1,57 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
-<title>Zombie Slayer - WebApp</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>Zombie Slayer — Battle</title>
 <style>
   :root{
-    --bg:#0b0f11; --panel:#111416; --accent:#3fb6ad; --muted:#9aa3a6; --card:#141619;
+    --bg:#071017; --panel:#0f1416; --accent:#3fb6ad; --muted:#9aa3a6; --card:#0d1213;
+    --hit:#ff6b6b; --heal:#6be6a5;
   }
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#dfe7e6;background:linear-gradient(180deg,#071017 0%, #0f1416 70%);}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(60,90,80,0.06), transparent 8%),
+    linear-gradient(180deg,#071017 0%, #0c1112 100%);color:#e6f7f3}
   .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;}
-  .game {
-    width:100%; max-width:420px; border-radius:16px; overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,0.6);
-    background:linear-gradient(180deg,var(--panel),#0c1213);
-    border:1px solid rgba(255,255,255,0.03);
-  }
-  header{padding:18px 20px;display:flex;align-items:center;gap:12px;}
-  .logo{width:44px;height:44px;background:linear-gradient(180deg,#52d6c7,#2d9f95);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
-  h1{font-size:20px;margin:0;color:var(--accent)}
-  p.lead{margin:0;color:var(--muted);font-size:13px}
-  .arena{padding:12px;background:linear-gradient(180deg,#0b1011,#0b0f10);display:grid;grid-template-columns:1fr;gap:12px}
-  .battle {
-    height:240px;background:linear-gradient(180deg,#0f1516, #0b0f10); border-radius:12px; display:flex;align-items:center;justify-content:space-between;padding:16px;position:relative;overflow:hidden;
-  }
-  /* simple sprites built with divs */
-  .player, .zombie { width:110px; height:140px; border-radius:8px; display:flex;align-items:flex-end; justify-content:center; flex-direction:column; padding:8px; color:white;}
-  .player { background:linear-gradient(180deg,#2b8f6b,#1e6b53); transform-origin:center bottom; }
-  .zombie { background:linear-gradient(180deg,#6b3b8f,#4b2d6e); transform-origin:center bottom; }
-  .sprite-head{width:64px;height:64px;border-radius:12px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;font-size:30px;opacity:0.95}
-  .player .sprite-head{background:rgba(255,255,255,0.06)}
-  .zombie .sprite-head{background:rgba(0,0,0,0.08)}
-  .hpbar{position:absolute;left:50%;transform:translateX(-50%);top:14px;background:rgba(0,0,0,0.25);padding:6px 10px;border-radius:999px;display:flex;gap:12px;align-items:center;color:var(--muted);font-size:13px}
-  .meter{height:8px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden;width:120px}
-  .meter > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#68d6c9);width:40%}
-  .controls{display:flex;gap:8px;align-items:center;justify-content:center;padding:10px;}
-  button.btn {background:var(--accent);border:none;padding:12px 18px;border-radius:10px;color:#042021;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(60,180,170,0.12)}
-  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-  .log{height:120px;background:linear-gradient(180deg,#0b1011,#0a0d0e);padding:12px;border-radius:12px;margin:12px;border:1px solid rgba(255,255,255,0.02);overflow:auto;color:#cfe7e4;font-size:14px}
-  .top {display:flex;gap:10px;align-items:center;padding:12px;justify-content:space-between}
-  .xpbar{height:10px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden;width:60%}
-  .xpbar > i{height:100%;background:linear-gradient(90deg,#ffd166,#ff8a66);width:10%}
-  .popup{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.9);background:var(--card);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);min-width:250px;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,0.6);display:none}
-  .popup.show{display:block;animation:pop .18s ease-out forwards}
-  @keyframes pop{from{transform:translate(-50%,-50%) scale(0.9);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
-  .loot {display:flex;gap:8px;align-items:center}
-  .item {background:rgba(255,255,255,0.03);padding:8px;border-radius:8px;min-width:60px;text-align:center}
-  footer{padding:12px 14px;display:flex;gap:8px;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent)}
-  .small{font-size:13px;color:var(--muted)}
-  /* attack animation */
-  .hit { animation:shake .12s linear }
-  @keyframes shake { 0%{transform:translateY(0)}50%{transform:translateY(-6px) rotate(-2deg)}100%{transform:translateY(0)}}
+  .game{width:100%;max-width:480px;border-radius:16px;overflow:hidden;background:linear-gradient(180deg,var(--panel),#071011);
+    border:1px solid rgba(255,255,255,0.03);box-shadow:0 10px 40px rgba(0,0,0,0.6)}
+  header{display:flex;gap:12px;align-items:center;padding:14px 16px}
+  .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(180deg,#55d7c8,#2b9b8b);display:flex;align-items:center;justify-content:center;font-size:22px}
+  h1{margin:0;font-size:18px;color:var(--accent)} .lead{margin:0;color:var(--muted);font-size:13px}
+  .arena{padding:12px;background:linear-gradient(180deg,#0b1011,#071011)}
+  .battle{height:320px;background:linear-gradient(180deg,#081012,#061013);border-radius:12px;display:flex;align-items:end;justify-content:space-between;padding:18px;position:relative;overflow:hidden}
+  .stage{position:relative;width:100%;height:100%;display:flex;align-items:end;justify-content:center}
+  /* ground */
+  .ground{position:absolute;left:0;right:0;bottom:0;height:76px;background:linear-gradient(180deg,#05110f,#061313);box-shadow:inset 0 8px 18px rgba(0,0,0,0.6)}
+  /* characters */
+  .char{position:absolute;bottom:86px;width:140px;height:170px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;transition:transform .18s linear}
+  .player{left:16%;transform-origin:center bottom}
+  .zombie{right:16%;transform-origin:center bottom}
+  /* SVG frame */
+  .card-sprite{width:120px;height:140px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.02)}
+  .name{font-size:13px;color:var(--muted);margin-top:6px}
+  /* health bars */
+  .hpbar{position:absolute;left:50%;transform:translateX(-50%);top:16px;background:rgba(0,0,0,0.25);padding:8px 12px;border-radius:999px;display:flex;gap:12px;align-items:center;color:var(--muted);font-size:13px}
+  .meter{height:8px;background:rgba(255,255,255,0.05);border-radius:999px;overflow:hidden;width:110px}
+  .meter > i{display:block;height:100%;background:linear-gradient(90deg,#ffb86b,#ffd166);width:40%}
+  /* controls */
+  .controls{display:flex;gap:8px;align-items:center;justify-content:center;padding:12px}
+  button.btn{background:var(--accent);border:none;padding:12px 16px;border-radius:10px;color:#032522;font-weight:700;cursor:pointer;box-shadow:0 8px 18px rgba(50,160,150,0.12)}
+  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:10px 12px;border-radius:10px}
+  .log{height:120px;background:linear-gradient(180deg,#071113,#051012);padding:12px;border-radius:10px;margin-top:12px;border:1px solid rgba(255,255,255,0.02);overflow:auto;color:#bfece5;font-size:14px}
+  .popup{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.9);background:linear-gradient(180deg,#091114,#071012);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);min-width:260px;z-index:50;display:none;box-shadow:0 14px 40px rgba(0,0,0,0.6)}
+  .popup.show{display:block;animation:pop .16s ease-out forwards}
+  @keyframes pop{from{transform:translate(-50%,-50%) scale(.92);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+  .loot{display:flex;gap:10px;align-items:center;justify-content:center}
+  .item{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;min-width:80px;text-align:center}
+  /* attack anim */
+  .attackAnim{animation:attackMove .25s ease-out forwards}
+  @keyframes attackMove{0%{transform:translateY(0)}50%{transform:translateY(-12px) scale(1.03)}100%{transform:translateY(0)}}
+  .hitFlash{position:absolute;pointer-events:none;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(255,107,107,0.35), rgba(255,107,107,0.06) 20%, transparent 40%);opacity:0;transform:translate(-50%,-50%);left:50%;top:36%}
+  .hitFlash.show{animation:flash .22s ease-out forwards}
+  @keyframes flash{0%{opacity:1;transform:scale(.6)}100%{opacity:0;transform:scale(1.6)}}
   /* responsive */
-  @media (max-width:420px){ .battle{height:220px;padding:12px} .player,.zombie{width:90px;height:120px}}
+  @media (max-width:420px){ .battle{height:280px} .char{width:110px;height:150px} .card-sprite{width:100px;height:120px} }
 </style>
 </head>
 <body>
@@ -61,59 +61,76 @@
       <div class="logo">🧟</div>
       <div>
         <h1>Zombie Slayer</h1>
-        <p class="lead">Kill zombies, get XP, level up & get loot</p>
+        <p class="lead">Move → Attack → Loot — Cartoon battle</p>
       </div>
     </header>
 
     <div class="arena">
-      <div class="top">
-        <div class="small">❤ Health: <strong id="playerHp">100</strong></div>
-        <div style="display:flex;gap:10px;align-items:center">
-          <div class="small">⭐ Level: <strong id="level">1</strong></div>
-          <div class="xpbar" title="XP">
-            <i id="xpMeter" style="width:0%"></i>
-          </div>
-          <div class="small">XP: <strong id="xp">0</strong></div>
-        </div>
+      <div class="hpbar">
+        <div style="font-weight:700;color:#ffd6a5">BATTLE</div>
+        <div style="width:10px"></div>
+        <div class="meter"><i id="zMeter" style="width:100%"></i></div>
+        <div id="zMeterTxt" style="color:var(--muted);font-size:13px">Z HP: 100</div>
       </div>
 
       <div class="battle" id="battle">
-        <div class="player" id="player">
-          <div class="sprite-head">🗡️</div>
-          <div style="font-size:13px;color:#bfece5">You</div>
-        </div>
-
-        <div class="hpbar">
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="font-weight:700;color:#ffd6a5">ZOMBIE</div>
-            <div class="meter"><i id="zHp" style="width:100%"></i></div>
-            <div id="zHpTxt" style="color:var(--muted);font-size:13px">HP: 100</div>
+        <div class="stage" id="stage">
+          <div class="char player" id="player" aria-hidden="true">
+            <div class="card-sprite" id="playerSprite">
+              <!-- player svg cartoon -->
+              <svg width="86" height="110" viewBox="0 0 86 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="6" y="10" width="74" height="90" rx="10" fill="#2b8f6b"/>
+                <circle cx="43" cy="36" r="20" fill="#fff6ea"/>
+                <circle cx="37" cy="34" r="3" fill="#2d2d2d"/>
+                <circle cx="49" cy="34" r="3" fill="#2d2d2d"/>
+                <rect x="30" y="50" width="26" height="10" rx="5" fill="#6be6a5"/>
+                <path d="M24 74c8 6 18 6 30 0" stroke="#0a2b1e" stroke-width="2" stroke-linecap="round"/>
+                <!-- sword -->
+                <rect x="58" y="18" width="8" height="44" rx="2" fill="#cbd5d0" transform="rotate(-22 58 18)"/>
+                <rect x="58" y="18" width="6" height="8" rx="1" fill="#ffdd66" transform="rotate(-22 58 18)"/>
+              </svg>
+            </div>
+            <div class="name">You</div>
           </div>
-        </div>
 
-        <div class="zombie" id="zombie">
-          <div class="sprite-head">🧟‍♂️</div>
-          <div style="font-size:13px;color:#ffd6a5">Enemy</div>
+          <div class="char zombie" id="zombie" aria-hidden="true">
+            <div class="card-sprite" id="zombieSprite">
+              <!-- zombie svg cartoon -->
+              <svg width="86" height="110" viewBox="0 0 86 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="6" y="10" width="74" height="90" rx="10" fill="#6b3b8f"/>
+                <ellipse cx="43" cy="36" rx="22" ry="18" fill="#a18ad1"/>
+                <rect x="30" y="46" width="26" height="10" rx="5" fill="#c3b0e3"/>
+                <path d="M28 74c10 8 18 8 30 0" stroke="#3a2450" stroke-width="2" stroke-linecap="round"/>
+                <rect x="58" y="20" width="8" height="44" rx="2" fill="#4b2d6e" transform="rotate(18 58 20)"/>
+              </svg>
+            </div>
+            <div class="name">Zombie</div>
+          </div>
+
+          <div class="hitFlash" id="hitFlash"></div>
+          <div class="ground"></div>
         </div>
       </div>
 
       <div class="controls">
-        <button class="btn" id="attackBtn">⚔️ Attack</button>
+        <button class="ghost" id="moveBtn">🏃 Move</button>
+        <button class="btn" id="attackBtn">⚔ Attack</button>
         <button class="ghost" id="healBtn">🩺 Heal</button>
-        <button class="ghost" id="skipBtn">⏭ Next</button>
       </div>
 
-      <div class="log" id="log">Welcome! Tap <strong>Attack</strong> to fight a zombie.</div>
+      <div class="log" id="log">Tap <strong>Move</strong> to approach enemy, then <strong>Attack</strong> to strike.</div>
+
     </div>
 
-    <footer>
-      <div class="small">Inventory: <span id="invCount">0</span> items</div>
-      <div class="small">Season ends in: <strong id="timer">--</strong></div>
-    </footer>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px">
+      <div style="font-size:13px;color:var(--muted)">❤ HP: <strong id="playerHp">100</strong></div>
+      <div style="font-size:13px;color:var(--muted)">⭐ Level: <strong id="level">1</strong> · XP: <strong id="xp">0</strong></div>
+    </div>
+
   </div>
 </div>
 
-<!-- popup loot -->
+<!-- loot popup -->
 <div class="popup" id="lootPopup">
   <div style="font-weight:700;margin-bottom:8px">Loot Dropped!</div>
   <div class="loot" id="lootBox"></div>
@@ -123,194 +140,202 @@
 </div>
 
 <script>
-/* Telegram WebApp integration (if inside TG) */
+/* WebApp expand if inside Telegram */
 const tg = window.Telegram ? window.Telegram.WebApp || null : null;
-if (tg) {
-  try { tg.expand(); } catch(e){/* ignore */ }
-}
+if(tg){ try{ tg.expand(); } catch(e){} }
 
-/* Game state */
-let player = { hp: 100, maxHp: 100, baseDamage: 18, level: 1, xp: 0, inv: [] };
+/* state */
+let player = { x: 0, hp: 100, maxHp: 100, baseDamage: 18, level:1, xp:0, inv:[] };
 let zombie = null;
-let logEl = document.getElementById('log');
-let attackBtn = document.getElementById('attackBtn');
-let healBtn = document.getElementById('healBtn');
-let skipBtn = document.getElementById('skipBtn');
-let zHpEl = document.getElementById('zHp');
-let zHpTxt = document.getElementById('zHpTxt');
-let playerHpEl = document.getElementById('playerHp');
-let xpEl = document.getElementById('xp');
-let xpMeter = document.getElementById('xpMeter');
-let levelEl = document.getElementById('level');
-let invCount = document.getElementById('invCount');
-let lootPopup = document.getElementById('lootPopup');
-let lootBox = document.getElementById('lootBox');
-let lootOk = document.getElementById('lootOk');
+const stage = document.getElementById('stage');
+const playerEl = document.getElementById('player');
+const zombieEl = document.getElementById('zombie');
+const hitFlash = document.getElementById('hitFlash');
+const logEl = document.getElementById('log');
+const playerHpEl = document.getElementById('playerHp');
+const xpEl = document.getElementById('xp');
+const levelEl = document.getElementById('level');
+const zMeter = document.getElementById('zMeter');
+const zMeterTxt = document.getElementById('zMeterTxt');
+const attackBtn = document.getElementById('attackBtn');
+const moveBtn = document.getElementById('moveBtn');
+const healBtn = document.getElementById('healBtn');
+const lootPopup = document.getElementById('lootPopup');
+const lootBox = document.getElementById('lootBox');
+const lootOk = document.getElementById('lootOk');
 
-function randomInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function writeLog(t){ logEl.innerHTML = `<div style="margin-bottom:8px">${t}</div>` + logEl.innerHTML; }
 
+/* spawn new zombie */
 function newZombie(){
-  const baseHp = 60 + (player.level-1)*20;
-  const baseDmg = 6 + Math.floor(player.level*1.5);
-  zombie = { hp: baseHp + randomInt(0,20), maxHp: baseHp + randomInt(0,20), damage: baseDmg + randomInt(0,6), rarity: ['common','rare','epic'][Math.min(2, Math.floor(Math.random()*3))] };
+  const lvl = Math.max(1, player.level + Math.floor(Math.random()*2 - 1));
+  const hp = 70 + (lvl-1)*22 + Math.floor(Math.random()*24);
+  const dmg = 6 + Math.floor(lvl*1.8) + Math.floor(Math.random()*6);
+  zombie = {hp: hp, maxHp: hp, damage: dmg, level:lvl};
   updateZombieUI();
-  writeLog(`A wild zombie appears! (Lvl ~${player.level})`);
+  writeLog(`A wild Zombie (Lv ${zombie.level}) appears!`);
+  // reset positions visually (player left, zombie right)
+  playerEl.style.left = '12%';
+  zombieEl.style.right = '12%';
 }
 
+/* update UI */
 function updateZombieUI(){
   const p = Math.max(0, Math.round((zombie.hp / zombie.maxHp) * 100));
-  zHpEl.style.width = p + '%';
-  zHpTxt.textContent = `HP: ${zombie.hp}`;
+  zMeter.style.width = p + '%';
+  zMeterTxt.textContent = `Z HP: ${zombie.hp}`;
+}
+function updatePlayerUI(){
+  playerHpEl.textContent = player.hp;
+  xpEl.textContent = player.xp;
+  levelEl.textContent = player.level;
 }
 
-function writeLog(txt){
-  logEl.innerHTML = `<div style="margin-bottom:8px">${txt}</div>` + logEl.innerHTML;
+/* movement: move player closer to zombie */
+function moveToEnemy(){
+  // animate player closer
+  playerEl.classList.add('attackAnim');
+  playerEl.style.left = '40%';
+  writeLog('You move forward to engage the Zombie.');
+  setTimeout(()=> { playerEl.classList.remove('attackAnim'); }, 300);
 }
 
+/* attack */
 function attack(){
   if(!zombie) return;
-  // player attack
-  const hit = randomInt(Math.max(1, player.baseDamage-6), player.baseDamage+6) + Math.floor(player.level*1.2);
-  zombie.hp -= hit;
-  document.getElementById('player').classList.add('hit');
-  setTimeout(()=> document.getElementById('player').classList.remove('hit'),120);
-  writeLog(`You hit Zombie for ${hit} damage!`);
+  // slam animation on player
+  playerEl.classList.add('attackAnim');
+  setTimeout(()=> playerEl.classList.remove('attackAnim'),300);
 
-  // zombie counter
+  // player hit
+  const hit = Math.floor(Math.random()*(player.baseDamage-4)) + Math.floor(player.baseDamage*0.6) + Math.floor(player.level*1.4);
+  zombie.hp -= hit;
+  showHitEffect('z');
+  writeLog(`You strike the Zombie for ${hit} damage!`);
+
+  // zombie retaliates if alive
   if(zombie.hp > 0){
-    const zh = randomInt(Math.max(1, zombie.damage-4), zombie.damage+4);
+    const zh = Math.floor(Math.random()*(zombie.damage-3)) + Math.floor(zombie.damage*0.6);
     player.hp -= zh;
-    document.getElementById('zombie').classList.add('hit');
-    setTimeout(()=> document.getElementById('zombie').classList.remove('hit'),120);
-    writeLog(`Zombie hit you for ${zh} damage!`);
+    showHitEffect('p');
+    writeLog(`Zombie hits you for ${zh} damage!`);
   }
 
   updateAll();
   checkCombat();
 }
 
+/* heal */
 function heal(){
-  const healAmt = Math.min(player.maxHp - player.hp, 18 + randomInt(0,12));
-  if(healAmt <= 0){ writeLog('You already have full HP.'); return; }
-  player.hp += healAmt;
-  writeLog(`You used a bandage and healed ${healAmt} HP.`);
+  const amt = Math.min(player.maxHp-player.hp, 18 + Math.floor(Math.random()*12));
+  if(amt<=0){ writeLog('You are already at full HP.'); return; }
+  player.hp += amt;
+  writeLog(`You healed ${amt} HP using a bandage.`);
   updateAll();
 }
 
-function skip(){
-  writeLog('You flee and a new zombie appears...');
-  newZombie();
+/* hit visual */
+function showHitEffect(target){
+  hitFlash.style.left = (target==='z' ? '72%' : '28%');
+  hitFlash.classList.remove('show');
+  void hitFlash.offsetWidth;
+  hitFlash.classList.add('show');
 }
 
+/* update both */
 function updateAll(){
-  playerHpEl.textContent = Math.max(0, player.hp);
-  xpEl.textContent = player.xp;
-  const xpPerc = Math.min(100, Math.round((player.xp / xpToLevel()) * 100));
-  xpMeter.style.width = xpPerc + '%';
-  levelEl.textContent = player.level;
-  invCount.textContent = player.inv.length;
+  updatePlayerUI();
   if(zombie) updateZombieUI();
 }
 
-function xpToLevel(){ return 80 + (player.level-1)*40; }
-
+/* combat checks */
 function checkCombat(){
   if(player.hp <= 0){
     writeLog('💀 You died! Respawning with half HP...');
     player.hp = Math.max(10, Math.floor(player.maxHp/2));
     player.xp = Math.max(0, player.xp - Math.floor(xpToLevel()*0.12));
     updateAll();
-    newZombie();
+    setTimeout(()=> newZombie(),800);
     return;
   }
   if(zombie && zombie.hp <= 0){
-    // win
-    const gained = Math.floor(20 + player.level*6 + randomInt(0,14));
+    const gained = Math.floor(20 + player.level*6 + Math.floor(Math.random()*18));
     player.xp += gained;
-    writeLog(`🧟 Zombie killed! +${gained} XP`);
-    // loot chance
-    if(Math.random() < 0.46){ // 46% drop
-      const item = generateLoot();
-      player.inv.push(item);
-      showLootPopup(item);
-    } else {
-      writeLog('No loot this time.');
-    }
-    // level up?
+    writeLog(`🧟 Zombie defeated! +${gained} XP`);
+    maybeDropLoot();
     if(player.xp >= xpToLevel()){
       player.level += 1;
       player.xp = player.xp - xpToLevel();
-      player.maxHp += 10;
-      player.baseDamage += 2;
-      writeLog(`🎉 Level Up! You are now Level ${player.level}`);
+      player.maxHp += 12;
+      player.baseDamage += 3;
+      writeLog(`🎉 Level Up! You reached Level ${player.level}`);
     }
     updateAll();
-    // spawn new zombie after short delay
-    setTimeout(()=> newZombie(), 600);
+    setTimeout(()=> newZombie(), 800);
+  }
+}
+
+function xpToLevel(){ return 100 + (player.level-1)*50; }
+
+function maybeDropLoot(){
+  if(Math.random() < 0.55){
+    const item = generateLoot();
+    player.inv.push(item);
+    showLootPopup(item);
+  } else {
+    writeLog('No loot this time.');
   }
 }
 
 function generateLoot(){
-  const types = ['Sword','Shield','Ring','Helmet','Boots'];
-  const rarityRoll = Math.random();
-  let rarity = 'Common';
-  if(rarityRoll > 0.9) rarity = 'Epic';
-  else if(rarityRoll > 0.7) rarity = 'Rare';
-  // attributes
-  const attr = {
-    damage: randomInt(2,8) + (rarity==='Epic'?6: (rarity==='Rare'?3:0)),
-    heal: randomInt(0,4) + (rarity==='Epic'?4:0),
-    dodge: randomInt(0,6),
-    combo: randomInt(0,3)
-  };
-  const item = { id: 'it'+Date.now()+randomInt(10,99), name: `${rarity} ${types[randomInt(0,types.length-1)]}`, rarity, attr };
-  return item;
+  const types = ['Sword','Shield','Boots','Helmet','Ring'];
+  const r = Math.random();
+  let rarity='Common';
+  if(r>0.93) rarity='Legendary';
+  else if(r>0.80) rarity='Epic';
+  else if(r>0.60) rarity='Rare';
+  const attr = { damage: randomInt(2,8) + (rarity==='Epic'?6: (rarity==='Legendary'?10:0)), heal: randomInt(0,4), dodge: randomInt(0,6), combo: randomInt(0,3) };
+  return { id:'it'+Date.now()+randomInt(10,99), name:`${rarity} ${types[randomInt(0,types.length-1)]}`, rarity, attr };
 }
 
 function showLootPopup(item){
   lootBox.innerHTML = '';
   const el = document.createElement('div');
-  el.className = 'item';
-  el.innerHTML = `<div style="font-weight:700">${item.name}</div>
-    <div style="font-size:13px;color:var(--muted)">DMG:${item.attr.damage} · HEAL:${item.attr.heal} · DODGE:${item.attr.dodge}</div>`;
+  el.className='item';
+  el.innerHTML = `<div style="font-weight:700">${item.name}</div><div style="font-size:13px;color:var(--muted)">DMG:${item.attr.damage} · HEAL:${item.attr.heal} · DODGE:${item.attr.dodge}</div>`;
   lootBox.appendChild(el);
   lootPopup.classList.add('show');
-  lootPopup.style.display = 'block';
+  lootPopup.style.display='block';
 }
 
 lootOk.addEventListener('click', ()=>{
   lootPopup.classList.remove('show');
-  lootPopup.style.display = 'none';
+  lootPopup.style.display='none';
   writeLog('Loot claimed & added to inventory.');
   updateAll();
 });
 
-/* attach events */
-attackBtn.addEventListener('click', ()=>{ attack(); });
-healBtn.addEventListener('click', ()=>{ heal(); });
-skipBtn.addEventListener('click', ()=>{ skip(); });
+/* helpers */
+function randomInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
 
-/* initialize */
-window.addEventListener('load', ()=> {
+/* attach events */
+attackBtn.addEventListener('click', ()=> attack());
+moveBtn.addEventListener('click', ()=> moveToEnemy());
+healBtn.addEventListener('click', ()=> heal());
+
+/* init */
+window.addEventListener('load', ()=>{
   updateAll();
   newZombie();
-});
-
-/* optional: save/load state to localStorage */
-function saveState(){
-  try{ localStorage.setItem('zs_state', JSON.stringify(player)); } catch(e){}
-}
-function loadState(){
+  // try load saved state
   try{
-    const s = localStorage.getItem('zs_state');
+    const s = localStorage.getItem('zs_state_v2');
     if(s){ const p = JSON.parse(s); player = {...player,...p}; updateAll(); }
   }catch(e){}
-}
-window.addEventListener('beforeunload', saveState);
-loadState();
-
-/* Debug: expose player for console testing */
-window._player = player;
+});
+window.addEventListener('beforeunload', ()=> {
+  try{ localStorage.setItem('zs_state_v2', JSON.stringify(player)); }catch(e){}
+});
 </script>
 </body>
 </html>
