@@ -1,73 +1,316 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Zombie Slayer</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+<title>Zombie Slayer - WebApp</title>
 <style>
-  body {
-    background: linear-gradient(180deg, #0b0c10, #1f2833);
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    text-align: center;
-    padding: 20px;
+  :root{
+    --bg:#0b0f11; --panel:#111416; --accent:#3fb6ad; --muted:#9aa3a6; --card:#141619;
   }
-  h1 { color: #66fcf1; }
-  button {
-    background-color: #45a29e;
-    border: none;
-    padding: 12px 25px;
-    color: white;
-    font-size: 16px;
-    margin-top: 15px;
-    border-radius: 8px;
-    cursor: pointer;
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#dfe7e6;background:linear-gradient(180deg,#071017 0%, #0f1416 70%);}
+  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;}
+  .game {
+    width:100%; max-width:420px; border-radius:16px; overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,0.6);
+    background:linear-gradient(180deg,var(--panel),#0c1213);
+    border:1px solid rgba(255,255,255,0.03);
   }
-  #log {
-    background: rgba(255,255,255,0.1);
-    border-radius: 10px;
-    margin-top: 20px;
-    padding: 15px;
-    min-height: 120px;
+  header{padding:18px 20px;display:flex;align-items:center;gap:12px;}
+  .logo{width:44px;height:44px;background:linear-gradient(180deg,#52d6c7,#2d9f95);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+  h1{font-size:20px;margin:0;color:var(--accent)}
+  p.lead{margin:0;color:var(--muted);font-size:13px}
+  .arena{padding:12px;background:linear-gradient(180deg,#0b1011,#0b0f10);display:grid;grid-template-columns:1fr;gap:12px}
+  .battle {
+    height:240px;background:linear-gradient(180deg,#0f1516, #0b0f10); border-radius:12px; display:flex;align-items:center;justify-content:space-between;padding:16px;position:relative;overflow:hidden;
   }
+  /* simple sprites built with divs */
+  .player, .zombie { width:110px; height:140px; border-radius:8px; display:flex;align-items:flex-end; justify-content:center; flex-direction:column; padding:8px; color:white;}
+  .player { background:linear-gradient(180deg,#2b8f6b,#1e6b53); transform-origin:center bottom; }
+  .zombie { background:linear-gradient(180deg,#6b3b8f,#4b2d6e); transform-origin:center bottom; }
+  .sprite-head{width:64px;height:64px;border-radius:12px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;font-size:30px;opacity:0.95}
+  .player .sprite-head{background:rgba(255,255,255,0.06)}
+  .zombie .sprite-head{background:rgba(0,0,0,0.08)}
+  .hpbar{position:absolute;left:50%;transform:translateX(-50%);top:14px;background:rgba(0,0,0,0.25);padding:6px 10px;border-radius:999px;display:flex;gap:12px;align-items:center;color:var(--muted);font-size:13px}
+  .meter{height:8px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden;width:120px}
+  .meter > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#68d6c9);width:40%}
+  .controls{display:flex;gap:8px;align-items:center;justify-content:center;padding:10px;}
+  button.btn {background:var(--accent);border:none;padding:12px 18px;border-radius:10px;color:#042021;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(60,180,170,0.12)}
+  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+  .log{height:120px;background:linear-gradient(180deg,#0b1011,#0a0d0e);padding:12px;border-radius:12px;margin:12px;border:1px solid rgba(255,255,255,0.02);overflow:auto;color:#cfe7e4;font-size:14px}
+  .top {display:flex;gap:10px;align-items:center;padding:12px;justify-content:space-between}
+  .xpbar{height:10px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden;width:60%}
+  .xpbar > i{height:100%;background:linear-gradient(90deg,#ffd166,#ff8a66);width:10%}
+  .popup{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.9);background:var(--card);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);min-width:250px;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,0.6);display:none}
+  .popup.show{display:block;animation:pop .18s ease-out forwards}
+  @keyframes pop{from{transform:translate(-50%,-50%) scale(0.9);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+  .loot {display:flex;gap:8px;align-items:center}
+  .item {background:rgba(255,255,255,0.03);padding:8px;border-radius:8px;min-width:60px;text-align:center}
+  footer{padding:12px 14px;display:flex;gap:8px;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent)}
+  .small{font-size:13px;color:var(--muted)}
+  /* attack animation */
+  .hit { animation:shake .12s linear }
+  @keyframes shake { 0%{transform:translateY(0)}50%{transform:translateY(-6px) rotate(-2deg)}100%{transform:translateY(0)}}
+  /* responsive */
+  @media (max-width:420px){ .battle{height:220px;padding:12px} .player,.zombie{width:90px;height:120px}}
 </style>
 </head>
 <body>
-  <h1>🧟‍♂️ Zombie Slayer</h1>
-  <p>Kill zombies to earn XP and level up!</p>
+<div class="wrap">
+  <div class="game" role="application">
+    <header>
+      <div class="logo">🧟</div>
+      <div>
+        <h1>Zombie Slayer</h1>
+        <p class="lead">Kill zombies, get XP, level up & get loot</p>
+      </div>
+    </header>
 
-  <button id="fightBtn">⚔️ Fight Zombie</button>
-  <div id="stats">❤️ Health: <span id="health">100</span> | ⭐ XP: <span id="xp">0</span></div>
+    <div class="arena">
+      <div class="top">
+        <div class="small">❤ Health: <strong id="playerHp">100</strong></div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div class="small">⭐ Level: <strong id="level">1</strong></div>
+          <div class="xpbar" title="XP">
+            <i id="xpMeter" style="width:0%"></i>
+          </div>
+          <div class="small">XP: <strong id="xp">0</strong></div>
+        </div>
+      </div>
 
-  <div id="log"></div>
+      <div class="battle" id="battle">
+        <div class="player" id="player">
+          <div class="sprite-head">🗡️</div>
+          <div style="font-size:13px;color:#bfece5">You</div>
+        </div>
+
+        <div class="hpbar">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="font-weight:700;color:#ffd6a5">ZOMBIE</div>
+            <div class="meter"><i id="zHp" style="width:100%"></i></div>
+            <div id="zHpTxt" style="color:var(--muted);font-size:13px">HP: 100</div>
+          </div>
+        </div>
+
+        <div class="zombie" id="zombie">
+          <div class="sprite-head">🧟‍♂️</div>
+          <div style="font-size:13px;color:#ffd6a5">Enemy</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn" id="attackBtn">⚔️ Attack</button>
+        <button class="ghost" id="healBtn">🩺 Heal</button>
+        <button class="ghost" id="skipBtn">⏭ Next</button>
+      </div>
+
+      <div class="log" id="log">Welcome! Tap <strong>Attack</strong> to fight a zombie.</div>
+    </div>
+
+    <footer>
+      <div class="small">Inventory: <span id="invCount">0</span> items</div>
+      <div class="small">Season ends in: <strong id="timer">--</strong></div>
+    </footer>
+  </div>
+</div>
+
+<!-- popup loot -->
+<div class="popup" id="lootPopup">
+  <div style="font-weight:700;margin-bottom:8px">Loot Dropped!</div>
+  <div class="loot" id="lootBox"></div>
+  <div style="margin-top:10px;display:flex;justify-content:flex-end">
+    <button class="btn" id="lootOk">Claim</button>
+  </div>
+</div>
 
 <script>
-let health = 100;
-let xp = 0;
+/* Telegram WebApp integration (if inside TG) */
+const tg = window.Telegram ? window.Telegram.WebApp || null : null;
+if (tg) {
+  try { tg.expand(); } catch(e){/* ignore */ }
+}
 
-document.getElementById('fightBtn').addEventListener('click', () => {
-  const damage = Math.floor(Math.random() * 15) + 5;
-  const zombieDamage = Math.floor(Math.random() * 10) + 3;
-  health -= zombieDamage;
-  xp += damage;
-  
-  const log = document.getElementById('log');
-  log.innerHTML += `<p>You hit Zombie for ${damage} damage! 🩸</p>`;
-  log.innerHTML += `<p>Zombie hit you for ${zombieDamage} damage!</p>`;
+/* Game state */
+let player = { hp: 100, maxHp: 100, baseDamage: 18, level: 1, xp: 0, inv: [] };
+let zombie = null;
+let logEl = document.getElementById('log');
+let attackBtn = document.getElementById('attackBtn');
+let healBtn = document.getElementById('healBtn');
+let skipBtn = document.getElementById('skipBtn');
+let zHpEl = document.getElementById('zHp');
+let zHpTxt = document.getElementById('zHpTxt');
+let playerHpEl = document.getElementById('playerHp');
+let xpEl = document.getElementById('xp');
+let xpMeter = document.getElementById('xpMeter');
+let levelEl = document.getElementById('level');
+let invCount = document.getElementById('invCount');
+let lootPopup = document.getElementById('lootPopup');
+let lootBox = document.getElementById('lootBox');
+let lootOk = document.getElementById('lootOk');
 
-  if (health <= 0) {
-    log.innerHTML += `<p>💀 You died! Game Over.</p>`;
-    health = 0;
-    document.getElementById('fightBtn').disabled = true;
-  } else if (xp >= 100) {
-    log.innerHTML += `<p>🎉 Level Up! You became stronger.</p>`;
-    xp = 0;
-    health = 100;
+function randomInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+function newZombie(){
+  const baseHp = 60 + (player.level-1)*20;
+  const baseDmg = 6 + Math.floor(player.level*1.5);
+  zombie = { hp: baseHp + randomInt(0,20), maxHp: baseHp + randomInt(0,20), damage: baseDmg + randomInt(0,6), rarity: ['common','rare','epic'][Math.min(2, Math.floor(Math.random()*3))] };
+  updateZombieUI();
+  writeLog(`A wild zombie appears! (Lvl ~${player.level})`);
+}
+
+function updateZombieUI(){
+  const p = Math.max(0, Math.round((zombie.hp / zombie.maxHp) * 100));
+  zHpEl.style.width = p + '%';
+  zHpTxt.textContent = `HP: ${zombie.hp}`;
+}
+
+function writeLog(txt){
+  logEl.innerHTML = `<div style="margin-bottom:8px">${txt}</div>` + logEl.innerHTML;
+}
+
+function attack(){
+  if(!zombie) return;
+  // player attack
+  const hit = randomInt(Math.max(1, player.baseDamage-6), player.baseDamage+6) + Math.floor(player.level*1.2);
+  zombie.hp -= hit;
+  document.getElementById('player').classList.add('hit');
+  setTimeout(()=> document.getElementById('player').classList.remove('hit'),120);
+  writeLog(`You hit Zombie for ${hit} damage!`);
+
+  // zombie counter
+  if(zombie.hp > 0){
+    const zh = randomInt(Math.max(1, zombie.damage-4), zombie.damage+4);
+    player.hp -= zh;
+    document.getElementById('zombie').classList.add('hit');
+    setTimeout(()=> document.getElementById('zombie').classList.remove('hit'),120);
+    writeLog(`Zombie hit you for ${zh} damage!`);
   }
 
-  document.getElementById('health').textContent = health;
-  document.getElementById('xp').textContent = xp;
+  updateAll();
+  checkCombat();
+}
+
+function heal(){
+  const healAmt = Math.min(player.maxHp - player.hp, 18 + randomInt(0,12));
+  if(healAmt <= 0){ writeLog('You already have full HP.'); return; }
+  player.hp += healAmt;
+  writeLog(`You used a bandage and healed ${healAmt} HP.`);
+  updateAll();
+}
+
+function skip(){
+  writeLog('You flee and a new zombie appears...');
+  newZombie();
+}
+
+function updateAll(){
+  playerHpEl.textContent = Math.max(0, player.hp);
+  xpEl.textContent = player.xp;
+  const xpPerc = Math.min(100, Math.round((player.xp / xpToLevel()) * 100));
+  xpMeter.style.width = xpPerc + '%';
+  levelEl.textContent = player.level;
+  invCount.textContent = player.inv.length;
+  if(zombie) updateZombieUI();
+}
+
+function xpToLevel(){ return 80 + (player.level-1)*40; }
+
+function checkCombat(){
+  if(player.hp <= 0){
+    writeLog('💀 You died! Respawning with half HP...');
+    player.hp = Math.max(10, Math.floor(player.maxHp/2));
+    player.xp = Math.max(0, player.xp - Math.floor(xpToLevel()*0.12));
+    updateAll();
+    newZombie();
+    return;
+  }
+  if(zombie && zombie.hp <= 0){
+    // win
+    const gained = Math.floor(20 + player.level*6 + randomInt(0,14));
+    player.xp += gained;
+    writeLog(`🧟 Zombie killed! +${gained} XP`);
+    // loot chance
+    if(Math.random() < 0.46){ // 46% drop
+      const item = generateLoot();
+      player.inv.push(item);
+      showLootPopup(item);
+    } else {
+      writeLog('No loot this time.');
+    }
+    // level up?
+    if(player.xp >= xpToLevel()){
+      player.level += 1;
+      player.xp = player.xp - xpToLevel();
+      player.maxHp += 10;
+      player.baseDamage += 2;
+      writeLog(`🎉 Level Up! You are now Level ${player.level}`);
+    }
+    updateAll();
+    // spawn new zombie after short delay
+    setTimeout(()=> newZombie(), 600);
+  }
+}
+
+function generateLoot(){
+  const types = ['Sword','Shield','Ring','Helmet','Boots'];
+  const rarityRoll = Math.random();
+  let rarity = 'Common';
+  if(rarityRoll > 0.9) rarity = 'Epic';
+  else if(rarityRoll > 0.7) rarity = 'Rare';
+  // attributes
+  const attr = {
+    damage: randomInt(2,8) + (rarity==='Epic'?6: (rarity==='Rare'?3:0)),
+    heal: randomInt(0,4) + (rarity==='Epic'?4:0),
+    dodge: randomInt(0,6),
+    combo: randomInt(0,3)
+  };
+  const item = { id: 'it'+Date.now()+randomInt(10,99), name: `${rarity} ${types[randomInt(0,types.length-1)]}`, rarity, attr };
+  return item;
+}
+
+function showLootPopup(item){
+  lootBox.innerHTML = '';
+  const el = document.createElement('div');
+  el.className = 'item';
+  el.innerHTML = `<div style="font-weight:700">${item.name}</div>
+    <div style="font-size:13px;color:var(--muted)">DMG:${item.attr.damage} · HEAL:${item.attr.heal} · DODGE:${item.attr.dodge}</div>`;
+  lootBox.appendChild(el);
+  lootPopup.classList.add('show');
+  lootPopup.style.display = 'block';
+}
+
+lootOk.addEventListener('click', ()=>{
+  lootPopup.classList.remove('show');
+  lootPopup.style.display = 'none';
+  writeLog('Loot claimed & added to inventory.');
+  updateAll();
 });
+
+/* attach events */
+attackBtn.addEventListener('click', ()=>{ attack(); });
+healBtn.addEventListener('click', ()=>{ heal(); });
+skipBtn.addEventListener('click', ()=>{ skip(); });
+
+/* initialize */
+window.addEventListener('load', ()=> {
+  updateAll();
+  newZombie();
+});
+
+/* optional: save/load state to localStorage */
+function saveState(){
+  try{ localStorage.setItem('zs_state', JSON.stringify(player)); } catch(e){}
+}
+function loadState(){
+  try{
+    const s = localStorage.getItem('zs_state');
+    if(s){ const p = JSON.parse(s); player = {...player,...p}; updateAll(); }
+  }catch(e){}
+}
+window.addEventListener('beforeunload', saveState);
+loadState();
+
+/* Debug: expose player for console testing */
+window._player = player;
 </script>
 </body>
 </html>
