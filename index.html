@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Zombie Slayer</title>
+<style>
+  body {
+    background: linear-gradient(180deg, #0b0c10, #1f2833);
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+  h1 { color: #66fcf1; }
+  button {
+    background-color: #45a29e;
+    border: none;
+    padding: 12px 25px;
+    color: white;
+    font-size: 16px;
+    margin-top: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  #log {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    margin-top: 20px;
+    padding: 15px;
+    min-height: 120px;
+  }
+</style>
+</head>
+<body>
+  <h1>🧟‍♂️ Zombie Slayer</h1>
+  <p>Kill zombies to earn XP and level up!</p>
+
+  <button id="fightBtn">⚔️ Fight Zombie</button>
+  <div id="stats">❤️ Health: <span id="health">100</span> | ⭐ XP: <span id="xp">0</span></div>
+
+  <div id="log"></div>
+
+<script>
+let health = 100;
+let xp = 0;
+
+document.getElementById('fightBtn').addEventListener('click', () => {
+  const damage = Math.floor(Math.random() * 15) + 5;
+  const zombieDamage = Math.floor(Math.random() * 10) + 3;
+  health -= zombieDamage;
+  xp += damage;
+  
+  const log = document.getElementById('log');
+  log.innerHTML += `<p>You hit Zombie for ${damage} damage! 🩸</p>`;
+  log.innerHTML += `<p>Zombie hit you for ${zombieDamage} damage!</p>`;
+
+  if (health <= 0) {
+    log.innerHTML += `<p>💀 You died! Game Over.</p>`;
+    health = 0;
+    document.getElementById('fightBtn').disabled = true;
+  } else if (xp >= 100) {
+    log.innerHTML += `<p>🎉 Level Up! You became stronger.</p>`;
+    xp = 0;
+    health = 100;
+  }
+
+  document.getElementById('health').textContent = health;
+  document.getElementById('xp').textContent = xp;
+});
+</script>
+</body>
+</html>
